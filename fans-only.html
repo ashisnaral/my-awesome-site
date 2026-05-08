@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fans Only - AK Naral</title>
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+  <style>
+    /* ===== 1990s RETRO WEB AESTHETICS ===== */
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Special+Elite&display=swap');
+
+    :root {
+      --bg-main: #c0c0c0;
+      --bg-page: #d4d0c8;
+      --navy: #000080;
+      --teal: #008080;
+      --maroon: #800000;
+      --yellow: #ffff00;
+      --lime: #00ff00;
+      --white: #ffffff;
+      --black: #000000;
+      --silver: #c0c0c0;
+      --gray-dark: #808080;
+      --link-blue: #0000ee;
+      --link-visited: #551a8b;
+      --link-active: #ff0000;
+      --win95-light: #ffffff;
+      --win95-shadow: #808080;
+      --win95-dark: #404040;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%23b0b0b0'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23b0b0b0'/%3E%3C/svg%3E");
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 14px;
+      color: var(--black);
+      margin: 0;
+      padding: 10px;
+    }
+
+    a { color: var(--link-blue); }
+    a:visited { color: var(--link-visited); }
+    a:active { color: var(--link-active); }
+
+    /* ===== WIN95 WINDOW CHROME ===== */
+    .win95-window {
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      background: var(--bg-page);
+      margin-bottom: 10px;
+    }
+
+    .win95-titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: white;
+      font-family: 'MS Sans Serif', 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 3px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      animation: blink-titlebar 2s infinite;
+    }
+
+    @keyframes blink-titlebar {
+      0%, 100% { background: linear-gradient(to right, #000080, #1084d0); }
+      50% { background: linear-gradient(to right, #1084d0, #000080); }
+    }
+
+    .win95-titlebar .title-icon {
+      font-size: 14px;
+      margin-right: 4px;
+    }
+
+    .win95-titlebar-buttons {
+      display: flex;
+      gap: 2px;
+    }
+
+    .win95-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--silver);
+      border-top: 1px solid var(--win95-light);
+      border-left: 1px solid var(--win95-light);
+      border-right: 1px solid var(--win95-dark);
+      border-bottom: 1px solid var(--win95-dark);
+      font-size: 10px;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .win95-content {
+      padding: 8px;
+    }
+
+    /* ===== MARQUEE HEADER ===== */
+    .marquee-bar {
+      background: var(--navy);
+      color: var(--yellow);
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      padding: 4px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .marquee-bar marquee {
+      display: block;
+    }
+
+    /* ===== HERO BANNER ===== */
+    .hero-banner {
+      background: linear-gradient(135deg, #ff0000 0%, #ff69b4 50%, #ff1493 100%);
+      border: 4px ridge #a0a0a0;
+      text-align: center;
+      padding: 20px;
+      margin-bottom: 10px;
+    }
+
+    .hero-banner h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: var(--yellow);
+      text-shadow: 3px 3px 0px #000000, 5px 5px 0px #333333;
+      margin: 0;
+      letter-spacing: 2px;
+      animation: pulse-text 1.5s infinite;
+    }
+
+    @keyframes pulse-text {
+      0%, 100% { text-shadow: 3px 3px 0px #000000, 5px 5px 0px #333333; transform: scale(1); }
+      50% { text-shadow: 3px 3px 0px #ffff00, 5px 5px 0px #ff6600; transform: scale(1.05); }
+    }
+
+    /* ===== HORIZONTAL RULE ===== */
+    .retro-hr {
+      border: none;
+      height: 4px;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      margin: 8px 0;
+    }
+
+    /* ===== TERMINAL DISPLAY ===== */
+    .terminal-box {
+      background: #000000;
+      color: var(--lime);
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+      padding: 16px;
+      border: 3px inset #808080;
+      text-align: center;
+      letter-spacing: 2px;
+      animation: terminal-glow 1.5s infinite;
+      line-height: 1.8;
+    }
+
+    @keyframes terminal-glow {
+      0%, 100% {
+        text-shadow: 0 0 10px #00ff00, 0 0 20px #00aa00;
+        box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+      }
+      50% {
+        text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00aa00;
+        box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.5);
+      }
+    }
+
+    .ip-address {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 16px 0;
+      animation: blink-ip 1s infinite;
+    }
+
+    @keyframes blink-ip {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* ===== NORDVPN SECTION ===== */
+    .nordvpn-box {
+      background: linear-gradient(135deg, #002d72 0%, #0071e3 50%, #00d9ff 100%);
+      border: 4px outset #ffffff;
+      padding: 16px;
+      margin: 16px 0;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .nordvpn-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      color: #ffff00;
+      text-shadow: 2px 2px 0px #000000;
+      margin-bottom: 10px;
+      animation: pulse-text 1.5s infinite;
+    }
+
+    .nordvpn-text {
+      color: white;
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .nordvpn-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff6b00, #ff9500);
+      color: white;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      padding: 10px 20px;
+      border: 3px outset #ffffff;
+      text-decoration: none;
+      cursor: pointer;
+      animation: bounce 2s infinite;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .nordvpn-btn:hover {
+      background: linear-gradient(135deg, #ff9500, #ffb700);
+      text-decoration: none;
+      color: white;
+    }
+
+    .discount-code {
+      background: #000000;
+      color: var(--lime);
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      padding: 8px 12px;
+      border: 2px solid var(--yellow);
+      display: inline-block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    /* ===== MESSAGE BOX ===== */
+    .message-box {
+      background: #ffff00;
+      border: 3px solid #000000;
+      padding: 16px;
+      margin: 16px 0;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      text-align: center;
+      animation: shake 0.5s infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      background: var(--silver);
+      border-top: 1px solid var(--win95-dark);
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      padding: 2px 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .status-panel {
+      border-top: 1px solid var(--win95-dark);
+      border-left: 1px solid var(--win95-dark);
+      border-right: 1px solid var(--win95-light);
+      border-bottom: 1px solid var(--win95-light);
+      padding: 0 6px;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ===== BACK BUTTON ===== */
+    .back-btn {
+      display: inline-block;
+      background: var(--silver);
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      padding: 6px 14px;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--black);
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .back-btn:hover {
+      background: #b0b0b0;
+      text-decoration: none;
+      color: var(--black);
+    }
+
+    .sparkle-div {
+      text-align: center;
+      font-size: 20px;
+      letter-spacing: 4px;
+      margin: 6px 0;
+    }
+
+    .section-heading {
+      font-family: 'VT323', monospace;
+      font-size: 26px;
+      color: var(--navy);
+      border-bottom: 3px double var(--navy);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+  </style>
+</head>
+<body>
+<div class="main-wrapper">
+
+  <!-- MARQUEE TOP -->
+  <div class="marquee-bar">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+      ⚠️ FANS ONLY ZONE ⚠️ &nbsp;&nbsp;&nbsp; YOUR IP ADDRESS IS SHOWING &nbsp;&nbsp;&nbsp; 🔓 PRIVACY BREACHED 🔓 &nbsp;&nbsp;&nbsp; HATE ME AND STILL STALK ME? YOU A REAL FAN! &nbsp;&nbsp;&nbsp; NEED A VPN? GET NORDVPN NOW! &nbsp;&nbsp;&nbsp; ⚠️
+    </marquee>
+  </div>
+
+  <!-- BACK BUTTON -->
+  <a href="index.html" class="back-btn">← BACK TO MAIN</a>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <h1>★ FANS ONLY ★</h1>
+    <div style="font-family:'VT323',monospace; font-size:18px; color:#ffff00; margin-top:8px;">:: YOUR IP IS SHOWING ::</div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="win95-window">
+    <div class="win95-titlebar">
+      <span><span class="title-icon">👁️</span> Real Fan Check</span>
+      <div class="win95-titlebar-buttons">
+        <div class="win95-btn">_</div>
+        <div class="win95-btn">□</div>
+        <div class="win95-btn">✕</div>
+      </div>
+    </div>
+    <div class="win95-content">
+      <div class="sparkle-div">✧ ✦ ✧ ✦ ✧</div>
+
+      <!-- MESSAGE BOX -->
+      <div class="message-box">
+        HATE ME AND STILL STALK ME, BTCH,<br>YOU A REAL FAN!
+      </div>
+
+      <div class="retro-hr"></div>
+
+      <!-- TERMINAL WITH IP -->
+      <div class="terminal-box">
+        <div>ACCESSING SYSTEM...</div>
+        <div>━━━━━━━━━━━━━━━━━━━━</div>
+        <div>YOUR IP ADDRESS:</div>
+        <div class="ip-address" id="ip-display">000.000.000.000</div>
+        <div>━━━━━━━━━━━━━━━━━━━━</div>
+        <div style="font-size:14px; margin-top:12px;">[ ACCESS GRANTED ]</div>
+      </div>
+
+      <div class="retro-hr"></div>
+      <div class="sparkle-div">✧ ✦ ✧ ✦ ✧</div>
+
+      <!-- NORDVPN PROMO -->
+      <div class="nordvpn-box">
+        <div class="nordvpn-title">🔒 OOPS! YOUR IP IS EXPOSED!</div>
+        <div class="nordvpn-text">
+          You've been exposed! Your IP address is now visible to AK Naral and everyone visiting this page! 😱<br><br>
+          But wait... you're a REAL FAN, so you gotta stay loyal, right? 👀<br><br>
+          If you want to stalk AK Naral WITHOUT him knowing where you're from, get <b>NordVPN</b> now!<br>
+          Hide your IP. Stay anonymous. Keep supporting the music. 🎵🕵️
+        </div>
+        <a href="https://nordvpn.com" target="_blank" class="nordvpn-btn">SUBSCRIBE TO NORDVPN NOW</a>
+        <div class="discount-code">USE CODE: AKFAN20 FOR 20% OFF</div>
+      </div>
+
+      <div class="retro-hr"></div>
+
+      <!-- EXTRA MESSAGE -->
+      <div style="text-align:center; font-family:'Special Elite',cursive; font-style:italic; font-size:14px; color:#555; background:#ffffcc; padding:12px; border:2px dotted #999;">
+        💝 Thanks for being a loyal fan of AK Naral! Your dedication is noted (and so is your IP). 
+        <br>Now go listen to the music on Spotify! 🎧
+      </div>
+
+      <div class="sparkle-div" style="margin-top:16px;">✧ ✦ ✧ ✦ ✧</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="win95-window mt-1">
+    <div class="win95-titlebar">
+      <span>ℹ️ Fan Info</span>
+    </div>
+    <div class="win95-content text-center">
+      <div class="retro-hr"></div>
+      <div style="font-family:'VT323',monospace; font-size:18px; color:var(--maroon);">
+        ★ YOU'RE EXPOSED BUT YOU'RE STILL HERE ★
+      </div>
+      <div style="font-family:Arial; font-size:11px; color:#555; margin-top:8px;">
+        That's what a REAL FAN does. Thanks for the loyalty!<br>
+        Now go support the music and share with other fans.
+      </div>
+      <div class="retro-hr"></div>
+      <div class="sparkle-div" style="font-size:14px; color: var(--maroon);">
+        📸 <a href="https://instagram.com/ak_naral" target="_blank">@ak_naral</a> &nbsp;|&nbsp;
+        🎵 <a href="https://open.spotify.com/artist/4cDNyfvcSaKb2d0bXgPv1W" target="_blank">Spotify</a> &nbsp;|&nbsp;
+        🌐 <a href="https://bandlocate.com" target="_blank">BandLocate</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-panel">✔ Done</span>
+    <span class="status-panel">fans-only.aknaral.com</span>
+    <span class="status-panel" id="clock"></span>
+    <span class="status-panel">🌐 Fans Zone</span>
+  </div>
+
+</div><!-- end main-wrapper -->
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Fetch user's IP address
+  async function getIPAddress() {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      document.getElementById('ip-display').textContent = data.ip;
+    } catch (error) {
+      console.error('Error fetching IP:', error);
+      document.getElementById('ip-display').textContent = 'ERROR: IP NOT FOUND';
+    }
+  }
+
+  // Clock in status bar
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString();
+  }
+
+  // Initialize
+  getIPAddress();
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+
+</body>
+</html>
