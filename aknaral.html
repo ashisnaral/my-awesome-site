@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AK Naral - Official Website</title>
+  <!-- Bootstrap 5 (Bootstrap Studio compatible) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+  <style>
+    /* ===== 1990s RETRO WEB AESTHETICS ===== */
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Special+Elite&display=swap');
+
+    :root {
+      --bg-main: #c0c0c0;
+      --bg-page: #d4d0c8;
+      --navy: #000080;
+      --teal: #008080;
+      --maroon: #800000;
+      --yellow: #ffff00;
+      --lime: #00ff00;
+      --white: #ffffff;
+      --black: #000000;
+      --silver: #c0c0c0;
+      --gray-dark: #808080;
+      --link-blue: #0000ee;
+      --link-visited: #551a8b;
+      --link-active: #ff0000;
+      --win95-light: #ffffff;
+      --win95-shadow: #808080;
+      --win95-dark: #404040;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%23b0b0b0'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%23b0b0b0'/%3E%3C/svg%3E");
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 14px;
+      color: var(--black);
+      margin: 0;
+      padding: 10px;
+    }
+
+    a { color: var(--link-blue); }
+    a:visited { color: var(--link-visited); }
+    a:active { color: var(--link-active); }
+
+    /* ===== WIN95 WINDOW CHROME ===== */
+    .win95-window {
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      background: var(--bg-page);
+      margin-bottom: 10px;
+    }
+
+    .win95-titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: white;
+      font-family: 'MS Sans Serif', 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 3px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .win95-titlebar .title-icon {
+      font-size: 14px;
+      margin-right: 4px;
+    }
+
+    .win95-titlebar-buttons {
+      display: flex;
+      gap: 2px;
+    }
+
+    .win95-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--silver);
+      border-top: 1px solid var(--win95-light);
+      border-left: 1px solid var(--win95-light);
+      border-right: 1px solid var(--win95-dark);
+      border-bottom: 1px solid var(--win95-dark);
+      font-size: 10px;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .win95-content {
+      padding: 8px;
+    }
+
+    /* ===== MARQUEE HEADER ===== */
+    .marquee-bar {
+      background: var(--navy);
+      color: var(--yellow);
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      padding: 4px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .marquee-bar marquee {
+      display: block;
+    }
+
+    /* ===== HERO BANNER ===== */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 50%, var(--maroon) 100%);
+      border: 4px ridge #a0a0a0;
+      text-align: center;
+      padding: 20px;
+      margin-bottom: 10px;
+    }
+
+    .hero-banner h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: var(--yellow);
+      text-shadow: 3px 3px 0px #ff0000, 5px 5px 0px #800000;
+      margin: 0;
+      letter-spacing: 2px;
+      animation: blink-shadow 1.5s infinite;
+    }
+
+    @keyframes blink-shadow {
+      0%, 100% { text-shadow: 3px 3px 0px #ff0000, 5px 5px 0px #800000; }
+      50% { text-shadow: 3px 3px 0px #00ff00, 5px 5px 0px #008000; }
+    }
+
+    .hero-banner .tagline {
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      color: var(--lime);
+      margin-top: 8px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .hero-banner .subtagline {
+      font-family: 'Special Elite', cursive;
+      color: #aaddff;
+      font-size: 13px;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    /* ===== HORIZONTAL RULE ===== */
+    .retro-hr {
+      border: none;
+      height: 4px;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      margin: 8px 0;
+    }
+
+    /* ===== SUNKEN PANEL ===== */
+    .sunken {
+      border-top: 2px solid var(--win95-dark);
+      border-left: 2px solid var(--win95-dark);
+      border-right: 2px solid var(--win95-light);
+      border-bottom: 2px solid var(--win95-light);
+      padding: 8px;
+      background: #e0e0e0;
+    }
+
+    /* ===== RAISED PANEL ===== */
+    .raised {
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      padding: 8px;
+      background: var(--bg-page);
+    }
+
+    /* ===== SECTION HEADINGS ===== */
+    .section-heading {
+      font-family: 'VT323', monospace;
+      font-size: 26px;
+      color: var(--navy);
+      border-bottom: 3px double var(--navy);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    /* ===== RETRO BUTTONS ===== */
+    .retro-btn {
+      display: inline-block;
+      background: var(--silver);
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      padding: 4px 12px;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--black);
+      text-decoration: none;
+      cursor: pointer;
+      transition: none;
+    }
+
+    .retro-btn:hover {
+      background: #b0b0b0;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .retro-btn:active {
+      border-top: 2px solid var(--win95-dark);
+      border-left: 2px solid var(--win95-dark);
+      border-right: 2px solid var(--win95-light);
+      border-bottom: 2px solid var(--win95-light);
+    }
+
+    .retro-btn-navy {
+      background: var(--navy);
+      color: var(--yellow);
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+    }
+
+    .retro-btn-teal {
+      background: var(--teal);
+      color: white;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+    }
+
+    .retro-btn-maroon {
+      background: var(--maroon);
+      color: white;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+    }
+
+    /* ===== LINK TABLE ===== */
+    .link-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .link-table td {
+      padding: 4px 8px;
+      border-bottom: 1px dotted #808080;
+      vertical-align: middle;
+    }
+
+    .link-table td:first-child {
+      width: 20px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .link-table tr:hover td {
+      background: #b0d4ff;
+    }
+
+    /* ===== VISITOR COUNTER ===== */
+    .counter-box {
+      background: #000;
+      color: var(--lime);
+      font-family: 'VT323', monospace;
+      font-size: 28px;
+      padding: 4px 10px;
+      border: 2px inset #808080;
+      display: inline-block;
+      letter-spacing: 4px;
+    }
+
+    /* ===== SPARKLE DIVIDER ===== */
+    .sparkle-div {
+      text-align: center;
+      font-size: 20px;
+      letter-spacing: 4px;
+      margin: 6px 0;
+    }
+
+    /* ===== UNDER CONSTRUCTION ===== */
+    .under-construction {
+      background: repeating-linear-gradient(
+        45deg,
+        #ffcc00,
+        #ffcc00 10px,
+        #000 10px,
+        #000 20px
+      );
+      color: white;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      text-align: center;
+      padding: 6px;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    /* ===== NAVBAR ===== */
+    .retro-navbar {
+      background: var(--silver);
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      padding: 4px 8px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .retro-navbar a {
+      display: inline-block;
+      background: var(--silver);
+      border-top: 2px solid var(--win95-light);
+      border-left: 2px solid var(--win95-light);
+      border-right: 2px solid var(--win95-dark);
+      border-bottom: 2px solid var(--win95-dark);
+      padding: 2px 10px;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .retro-navbar a:hover {
+      background: #b8b8b8;
+      color: var(--black);
+    }
+
+    /* ===== ABOUT BIO ===== */
+    .bio-text {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .bio-text p {
+      margin-bottom: 8px;
+    }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      background: var(--silver);
+      border-top: 1px solid var(--win95-dark);
+      font-family: 'Arial', sans-serif;
+      font-size: 11px;
+      padding: 2px 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .status-panel {
+      border-top: 1px solid var(--win95-dark);
+      border-left: 1px solid var(--win95-dark);
+      border-right: 1px solid var(--win95-light);
+      border-bottom: 1px solid var(--win95-light);
+      padding: 0 6px;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ===== GUESTBOOK FORM ===== */
+    .retro-input {
+      background: white;
+      border-top: 2px solid var(--win95-dark);
+      border-left: 2px solid var(--win95-dark);
+      border-right: 2px solid var(--win95-light);
+      border-bottom: 2px solid var(--win95-light);
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 3px;
+      width: 100%;
+    }
+
+    /* ===== ANIMATED GIF PLACEHOLDER ===== */
+    .gif-placeholder {
+      display: inline-block;
+      width: 88px;
+      height: 31px;
+      background: #000080;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      font-size: 7px;
+      text-align: center;
+      line-height: 31px;
+      border: 1px solid #fff;
+      animation: pulse-border 1s infinite;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { border-color: yellow; }
+      50% { border-color: lime; }
+    }
+
+    /* ===== BACKGROUND TILE OVERRIDE ===== */
+    .section-bg-blue {
+      background: #c0d8f0;
+      padding: 6px;
+    }
+
+    .best-viewed {
+      font-family: 'Arial', sans-serif;
+      font-size: 10px;
+      color: #404040;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* ===== RETRO TABLE ===== */
+    .info-table {
+      width: 100%;
+      font-family: 'Times New Roman', serif;
+      font-size: 13px;
+      border-collapse: collapse;
+    }
+
+    .info-table th {
+      background: var(--navy);
+      color: white;
+      padding: 3px 8px;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .info-table td {
+      padding: 3px 8px;
+      border-bottom: 1px solid #c0c0c0;
+    }
+
+    .info-table tr:nth-child(even) td {
+      background: #e8e8e8;
+    }
+
+    /* ===== SCROLLING TEXT ===== */
+    .scroll-ticker {
+      background: #000;
+      color: #00ff00;
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      padding: 3px 0;
+      overflow: hidden;
+    }
+
+    /* ===== HIGHLIGHT BOX ===== */
+    .highlight-box {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 6px 10px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    /* ===== EMOJI BULLETS ===== */
+    ul.retro-list {
+      list-style: none;
+      padding-left: 4px;
+    }
+
+    ul.retro-list li::before {
+      content: '► ';
+      color: var(--maroon);
+      font-size: 10px;
+    }
+
+  </style>
+</head>
+<body>
+<div class="main-wrapper">
+
+  <!-- MARQUEE TOP -->
+  <div class="marquee-bar">
+    <marquee behavior="scroll" direction="left" scrollamount="4">
+      ✦ WELCOME TO AKNARAL.COM ✦ &nbsp;&nbsp;&nbsp; AK NARAL — MUSICIAN • AUTHOR • ENTREPRENEUR &nbsp;&nbsp;&nbsp; ✦ 273 MONTHLY LISTENERS ON SPOTIFY ✦ &nbsp;&nbsp;&nbsp; NEW BOOK: "MILLION DOLLAR ROUTE" — COMING SOON! &nbsp;&nbsp;&nbsp; ✦ VISIT BANDLOCATE.COM ✦ &nbsp;&nbsp;&nbsp; SIGN MY GUESTBOOK! &nbsp;&nbsp;&nbsp; ✦ BEST VIEWED IN NETSCAPE NAVIGATOR 1024×768 ✦
+    </marquee>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <h1>★ AK NARAL ★</h1>
+    <div class="tagline">:: MUSICIAN :: AUTHOR :: NRN ::</div>
+    <div class="subtagline">Songwriter · Entrepreneur · Founder of BandLocate · Nepal → The World</div>
+    <div class="retro-hr" style="margin-top:12px;"></div>
+    <div style="margin-top:8px;">
+      <span class="gif-placeholder">SPOTIFY</span>
+      &nbsp;
+      <span class="gif-placeholder">YOUTUBE</span>
+      &nbsp;
+      <span class="gif-placeholder">AMAZON</span>
+    </div>
+    <div class="best-viewed">★ Best Viewed in 800×600 ★ Netscape Navigator 4.0+ ★</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <div class="retro-navbar">
+    <span style="font-weight:bold;font-size:12px;font-family:Arial;">📁</span>
+    <a href="#about">About</a>
+    <a href="#music">Music</a>
+    <a href="#books">Books</a>
+    <a href="#bandlocate">BandLocate</a>
+    <a href="#links">Links</a>
+    <a href="#guestbook">Guestbook</a>
+  </div>
+
+  <!-- SCROLL TICKER -->
+  <div class="scroll-ticker">
+    <marquee behavior="scroll" direction="left" scrollamount="3">
+      💾 LOADING... AK Naral wrote these songs in his early 20s — broke, broken, and often hungover. Today, he owns the copyright to all songs. | 📀 273 Monthly Listeners on Spotify | 📖 "College in Nepal: Confessions of an NRN" available on Amazon | 🎵 Cover his songs! DM @ak_naral on Instagram
+    </marquee>
+  </div>
+
+  <!-- TWO COLUMN MAIN CONTENT -->
+  <div class="row g-0 mt-1">
+
+    <!-- LEFT COLUMN -->
+    <div class="col-md-8 pe-1">
+
+      <!-- ABOUT SECTION -->
+      <div class="win95-window" id="about">
+        <div class="win95-titlebar">
+          <span><span class="title-icon">👤</span> About AK Naral</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <div class="sparkle-div">✧ ✦ ✧ ✦ ✧</div>
+          <div class="section-heading">About Me</div>
+          <div class="bio-text">
+            <p>
+              <b>Welcome, traveler of the information superhighway!</b> I'm <b>AK Naral</b> — songwriter, author, entrepreneur, and proud <b>Non-Resident Nepali (NRN)</b>.
+            </p>
+            <p>
+              I wrote my songs in my early twenties — a time when I was broke, broken, and often hungover. I once told myself: <i>"I'm going to copyright this sentiment someday."</i> Today, I own the copyright to every single one of them.
+            </p>
+            <p>
+              Rather than inflict my own voice on the world, I hired talented session artists to re-record my compositions. The music stayed. The cringe went away.
+            </p>
+            <p>
+              <b>Want to cover my songs?</b> Go for it. Want to collaborate? Hit me up on Instagram at <a href="https://instagram.com/ak_naral" target="_blank">@ak_naral</a>.
+            </p>
+          </div>
+          <div class="retro-hr"></div>
+          <div class="sparkle-div">✧ ✦ ✧ ✦ ✧</div>
+        </div>
+      </div>
+
+      <!-- MUSIC SECTION -->
+      <div class="win95-window" id="music">
+        <div class="win95-titlebar">
+          <span><span class="title-icon">🎵</span> My Music</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <div class="section-heading">Listen to AK Naral</div>
+
+          <div class="highlight-box mb-2">
+            🎸 273 MONTHLY LISTENERS ON SPOTIFY! Thank you for the support!!!
+          </div>
+
+          <table class="link-table">
+            <tr>
+              <td>🟢</td>
+              <td><b><a href="https://open.spotify.com/artist/4cDNyfvcSaKb2d0bXgPv1W?si=r4oZfzJhSgOJPFt59Qqgig" target="_blank">AK Naral on Spotify</a></b></td>
+              <td><a href="https://open.spotify.com/artist/4cDNyfvcSaKb2d0bXgPv1W?si=r4oZfzJhSgOJPFt59Qqgig" target="_blank" class="retro-btn retro-btn-teal">LISTEN</a></td>
+            </tr>
+            <tr>
+              <td>🔴</td>
+              <td><b><a href="https://www.youtube.com/@ak_naral" target="_blank">AK Naral on YouTube</a></b></td>
+              <td><a href="https://www.youtube.com/@ak_naral" target="_blank" class="retro-btn retro-btn-maroon">WATCH</a></td>
+            </tr>
+          </table>
+
+          <div class="retro-hr"></div>
+          <p style="font-family:'Special Elite',cursive; font-style:italic; font-size:13px; color:#555;">
+            "Listeners are welcome to cover the songs, and those interested in collaborating can reach out on Instagram (@ak_naral)."
+          </p>
+        </div>
+      </div>
+
+      <!-- BOOKS SECTION -->
+      <div class="win95-window" id="books">
+        <div class="win95-titlebar">
+          <span><span class="title-icon">📚</span> Books by AK Naral</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <div class="section-heading">Books</div>
+          <table class="info-table">
+            <tr>
+              <th>📖 Title</th>
+              <th>Status</th>
+              <th>Get It</th>
+            </tr>
+            <tr>
+              <td><b>College in Nepal: Confessions of an NRN</b></td>
+              <td><span style="color:green;">✔ AVAILABLE</span></td>
+              <td><a href="https://www.amazon.com/College-Nepal-Confessions-AK-Naral-ebook/dp/B07BN6BBH7" target="_blank" class="retro-btn">BUY ON AMAZON</a></td>
+            </tr>
+            <tr>
+              <td><b>Million Dollar Route: Confessions of an NRN</b><br><small><i>How I Made My First Million</i></small></td>
+              <td><span style="color:red; font-weight:bold;">🚧 COMING SOON</span></td>
+              <td><span class="retro-btn" style="opacity:0.6;">STAY TUNED</span></td>
+            </tr>
+          </table>
+          <div class="retro-hr"></div>
+          <div class="under-construction">
+            🚧 &nbsp; MILLION DOLLAR ROUTE — COMING SOON! WATCH THIS SPACE! &nbsp; 🚧
+          </div>
+        </div>
+      </div>
+
+      <!-- BANDLOCATE SECTION -->
+      <div class="win95-window" id="bandlocate">
+        <div class="win95-titlebar">
+          <span><span class="title-icon">🎸</span> BandLocate</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <div class="section-heading">BandLocate Initiative</div>
+          <div class="sunken" style="margin-bottom:8px;">
+            <p style="margin:0; font-size:13px;">
+              <b>BandLocate</b> is AK Naral's local music initiative — a platform dedicated to connecting bands, artists, and music lovers. Support the petition for BandLocate funding and help local music thrive!
+            </p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="https://bandlocate.com" target="_blank" class="retro-btn retro-btn-navy">🌐 Visit BandLocate.com</a>
+            <a href="https://bandlocate.com" target="_blank" class="retro-btn">Sign the Petition!</a>
+          </div>
+          <div class="retro-hr"></div>
+          <p style="font-size:12px; color:#555;">
+            💡 <i>BandLocate — helping musicians be found, heard, and supported.</i>
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="col-md-4">
+
+      <!-- VISITOR COUNTER -->
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>📊 Visitor Counter</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content text-center">
+          <div style="font-family:Arial;font-size:11px;margin-bottom:4px;">You are visitor #</div>
+          <div class="counter-box" id="visitor-counter">042069</div>
+          <div style="font-family:Arial;font-size:10px;margin-top:4px;color:#555;">Since 1999 ★ Welcome!</div>
+        </div>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="win95-window" id="links">
+        <div class="win95-titlebar">
+          <span>🔗 Quick Links</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <ul class="retro-list" style="margin:0;font-size:13px;">
+            <li><a href="https://open.spotify.com/artist/4cDNyfvcSaKb2d0bXgPv1W?si=r4oZfzJhSgOJPFt59Qqgig" target="_blank">Spotify</a></li>
+            <li><a href="https://www.youtube.com/@ak_naral" target="_blank">YouTube</a></li>
+            <li><a href="https://www.amazon.com/College-Nepal-Confessions-AK-Naral-ebook/dp/B07BN6BBH7" target="_blank">Amazon Book</a></li>
+            <li><a href="https://bandlocate.com" target="_blank">BandLocate</a></li>
+            <li><a href="https://linktr.ee/ak_naral" target="_blank">Linktree</a></li>
+            <li><a href="https://instagram.com/ak_naral" target="_blank">Instagram @ak_naral</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- FUN FACTS -->
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>⭐ Fun Facts</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <ul class="retro-list" style="font-size:12px;">
+            <li>Wrote his songs <b>broke & hungover</b></li>
+            <li>Owns <b>100% copyright</b> to all songs</li>
+            <li>Hired session artists to sing them</li>
+            <li>Author of <b>2 books</b></li>
+            <li>Proud <b>NRN</b> (Non-Resident Nepali)</li>
+            <li>Founder of <b>BandLocate</b></li>
+            <li><b>273</b> monthly Spotify listeners</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- GUESTBOOK CTA -->
+      <div class="win95-window" id="guestbook">
+        <div class="win95-titlebar">
+          <span>📝 Guestbook</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content">
+          <div class="section-heading" style="font-size:20px;">Sign My Guestbook!</div>
+          <div style="font-size:12px; margin-bottom:6px;">Leave a message for AK Naral:</div>
+          <div class="mb-2">
+            <label style="font-size:11px;font-family:Arial;">Your Name:</label><br>
+            <input type="text" class="retro-input" placeholder="e.g. Cool_Dude_1999">
+          </div>
+          <div class="mb-2">
+            <label style="font-size:11px;font-family:Arial;">Your Email:</label><br>
+            <input type="text" class="retro-input" placeholder="you@aol.com">
+          </div>
+          <div class="mb-2">
+            <label style="font-size:11px;font-family:Arial;">Message:</label><br>
+            <textarea class="retro-input" rows="3" placeholder="Your message here..."></textarea>
+          </div>
+          <button class="retro-btn retro-btn-navy" onclick="alert('Thank you for signing the guestbook! You are visitor #42,069 🎉')">
+            SUBMIT ★
+          </button>
+        </div>
+      </div>
+
+      <!-- BADGES -->
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>🏅 Web Badges</span>
+          <div class="win95-titlebar-buttons">
+            <div class="win95-btn">_</div>
+            <div class="win95-btn">□</div>
+            <div class="win95-btn">✕</div>
+          </div>
+        </div>
+        <div class="win95-content text-center">
+          <div class="d-flex flex-wrap gap-1 justify-content-center">
+            <div class="gif-placeholder" style="background:#000080; font-size:7px; line-height:15px; height:31px; display:flex; align-items:center; justify-content:center;">NETSCAPE NOW</div>
+            <div class="gif-placeholder" style="background:#800000;">AK NARAL FAN</div>
+            <div class="gif-placeholder" style="background:#008080;">BANDLOCATE</div>
+            <div class="gif-placeholder" style="background:#804000;">MADE W/ ❤️</div>
+          </div>
+          <div class="best-viewed mt-2">
+            This site is best viewed in<br>Netscape Navigator 4.0 or IE 5
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end row -->
+
+  <!-- FOOTER -->
+  <div class="win95-window mt-1">
+    <div class="win95-titlebar">
+      <span>ℹ️ Site Info</span>
+    </div>
+    <div class="win95-content text-center">
+      <div class="retro-hr"></div>
+      <div style="font-family:'VT323',monospace; font-size:20px; color:var(--navy);">
+        ★ AK NARAL — AKNARAL.COM ★
+      </div>
+      <div style="font-family:Arial; font-size:11px; color:#555; margin-top:4px;">
+        © 1999–2026 AK Naral. All Rights Reserved. All song compositions are the intellectual property of AK Naral.<br>
+        Built with ❤️ and HTML | Best viewed at 800×600 | 56k modem users: please be patient!
+      </div>
+      <div class="retro-hr"></div>
+      <div class="sparkle-div" style="font-size:16px; color: var(--navy);">
+        ✉ <a href="mailto:ak@aknaral.com">ak@aknaral.com</a> &nbsp;|&nbsp;
+        📸 <a href="https://instagram.com/ak_naral" target="_blank">@ak_naral</a> &nbsp;|&nbsp;
+        🌐 <a href="https://bandlocate.com" target="_blank">bandlocate.com</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-panel">✔ Done</span>
+    <span class="status-panel">aknaral.com</span>
+    <span class="status-panel" id="clock"></span>
+    <span class="status-panel">🌐 Internet Zone</span>
+  </div>
+
+</div><!-- end main-wrapper -->
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Clock in status bar
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Animated visitor counter
+  let count = 42069;
+  setInterval(() => {
+    count++;
+    document.getElementById('visitor-counter').textContent = String(count).padStart(6, '0');
+  }, 8000);
+</script>
+</body>
+</html>
