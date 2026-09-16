@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPERATION NIGHTHAWK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+<style>
+  :root{
+    --paper:#e7dfc6; --paper-dark:#dcd2b0; --ink:#23200f; --ink-soft:#4a4530;
+    --olive:#4b5320; --olive-dark:#33390f; --red:#8b1e1e; --red-dark:#6a1616;
+    --gold:#a9781f; --term-bg:#14170f; --term-line:#23281a; --term-text:#cdd8a6; --term-dim:#7f8f66;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:var(--paper); color:var(--ink); font-family:'Archivo',sans-serif; min-height:100vh; }
+  .app{ max-width:1180px; margin:0 auto; padding:18px 16px 50px; }
+
+  .masthead{ display:flex; align-items:center; justify-content:space-between; gap:14px; border-bottom:3px double var(--ink); padding-bottom:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .masthead h1{ font-family:'Special Elite',monospace; font-size:1.5rem; letter-spacing:1px; margin:0; }
+  .stamp{ font-family:'Special Elite',monospace; border:3px solid var(--red); color:var(--red); padding:5px 10px; transform:rotate(-6deg); font-size:0.78rem; letter-spacing:2px; border-radius:4px; }
+
+  .mapwrap{ background:var(--paper-dark); border:1px solid var(--ink-soft); padding:10px; margin-bottom:14px; }
+  .mapwrap svg{ width:100%; height:auto; display:block; }
+
+  .folder{ display:grid; grid-template-columns:44px minmax(0,1fr) minmax(0,1.35fr); gap:12px; align-items:start; }
+  @media (max-width:880px){ .folder{ grid-template-columns:1fr; } .tabs{ flex-direction:row !important; overflow-x:auto; position:static !important; } }
+
+  .tabs{ display:flex; flex-direction:column; gap:5px; position:sticky; top:10px; }
+  .tab{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-align:center; padding:6px 3px; background:var(--paper-dark); border:1px solid var(--ink-soft); color:var(--ink-soft); }
+  .tab.unlocked{ cursor:pointer; }
+  .tab.current{ background:var(--olive); color:var(--paper); border-color:var(--olive-dark); font-weight:600; }
+  .tab.complete{ background:var(--ink); color:var(--paper); }
+  .tab.complete::after{ content:' ✓'; }
+
+  .dossier{ background:var(--paper-dark); border:1px solid var(--ink-soft); padding:10px 12px; min-height:420px; }
+  .dossier-header{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:1.5px; color:var(--ink-soft); border-bottom:1px solid var(--ink-soft); padding-bottom:5px; margin-bottom:8px; }
+  .log-entry{ display:flex; gap:8px; align-items:flex-start; margin-bottom:10px; padding-bottom:9px; border-bottom:1px dashed rgba(0,0,0,0.25); }
+  .log-entry:last-child{ border-bottom:none; }
+  .log-icon{ flex:0 0 30px; width:30px; height:30px; color:var(--olive-dark); }
+  .log-icon svg{ width:100%; height:100%; }
+  .log-body .entry-title{ display:block; font-weight:700; font-size:0.74rem; letter-spacing:0.4px; color:var(--olive-dark); }
+  .log-entry.result-good .log-icon{ color:var(--red-dark); }
+  .log-entry.result-good .entry-title{ color:var(--red-dark); }
+  .log-body .line{ font-family:'Special Elite',monospace; font-size:0.86rem; line-height:1.4; }
+  .verified-stamp{ display:inline-block; font-family:'Special Elite',monospace; color:var(--red); border:2px solid var(--red); border-radius:3px; padding:1px 6px; font-size:0.66rem; letter-spacing:1.5px; margin-left:6px; animation:slam .4s ease-out; }
+  @keyframes slam{ 0%{ transform:rotate(-14deg) scale(2); opacity:0;} 60%{transform:rotate(-6deg) scale(1); opacity:1;} 100%{transform:rotate(-6deg) scale(1); opacity:1;} }
+
+  .doors{ display:flex; gap:5px; margin:10px 0 4px; }
+  .doors .door{ flex:1; height:26px; border:1px solid var(--ink-soft); background:rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; }
+  .doors .door.open{ background:var(--gold); border-color:var(--gold); }
+  .doors .door svg{ width:14px; height:14px; }
+
+  .terminal{ background:var(--term-bg); border:1px solid var(--olive-dark); padding:10px 12px 14px; color:var(--term-text); }
+  .terminal-header{ display:flex; justify-content:space-between; align-items:center; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:1.5px; color:var(--term-dim); border-bottom:1px solid var(--term-line); padding-bottom:6px; margin-bottom:8px; }
+  .terminal-header button{ font-family:'IBM Plex Mono',monospace; font-size:0.64rem; background:none; border:1px solid var(--term-dim); color:var(--term-dim); padding:3px 7px; cursor:pointer; }
+  .terminal-header button:hover{ color:var(--term-text); border-color:var(--term-text); }
+
+  .schema-panel{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; background:#0e100a; border:1px solid var(--term-line); padding:8px; margin-bottom:10px; max-height:200px; overflow-y:auto; }
+  .schema-panel.hidden{ display:none; }
+  .schema-table{ margin-bottom:6px; } .schema-table b{ color:#e3c88a; } .schema-table span{ color:var(--term-dim); }
+
+  .task-box{ display:flex; gap:10px; align-items:center; font-family:'IBM Plex Mono',monospace; font-size:0.82rem; background:rgba(169,120,31,0.08); border:1px solid var(--gold); color:#e9d9ad; padding:8px 10px; margin-bottom:8px; }
+  .task-box .task-icon{ flex:0 0 26px; width:26px; height:26px; color:#e9d9ad; }
+  .task-box .task-icon svg{ width:100%; height:100%; }
+
+  textarea#sqlInput{ width:100%; min-height:82px; resize:vertical; background:#0e100a; color:var(--term-text); font-family:'IBM Plex Mono',monospace; font-size:0.86rem; border:1px solid var(--term-line); padding:9px; outline:none; }
+  textarea#sqlInput:focus{ border-color:var(--gold); }
+  .controls{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .controls button{ font-family:'Archivo',sans-serif; font-weight:600; font-size:0.74rem; padding:8px 12px; cursor:pointer; border:none; }
+  #runBtn{ background:var(--gold); color:#1c1400; } #runBtn:hover{ background:#c48f28; }
+  #hintBtn{ background:transparent; color:var(--term-dim); border:1px solid var(--term-dim); }
+  #hintBtn:hover{ color:var(--term-text); border-color:var(--term-text); }
+  #resetBtn{ background:transparent; color:var(--red); border:1px solid var(--red-dark); margin-left:auto; }
+  #resetBtn:hover{ background:var(--red-dark); color:#f2e0e0; }
+
+  .hint-box{ margin-top:8px; padding:8px 9px; font-size:0.8rem; background:rgba(255,255,255,0.04); border-left:3px solid var(--term-dim); font-family:'IBM Plex Mono',monospace; color:#dfe6c9; }
+  .hint-box.hidden,.error-box.hidden{ display:none; }
+  .error-box{ margin-top:8px; padding:8px 9px; font-size:0.8rem; background:rgba(139,30,30,0.18); border-left:3px solid var(--red); font-family:'IBM Plex Mono',monospace; color:#f2c9c9; }
+
+  .results-box{ margin-top:10px; }
+  table.result-table{ width:100%; border-collapse:collapse; font-family:'IBM Plex Mono',monospace; font-size:0.76rem; }
+  table.result-table th,table.result-table td{ border:1px solid var(--term-line); padding:4px 7px; text-align:left; color:var(--term-text); }
+  table.result-table th{ background:#1c2013; color:#e3c88a; }
+  .row-count{ font-size:0.68rem; color:var(--term-dim); margin-top:5px; }
+
+  .victory-overlay{ position:fixed; inset:0; background:rgba(10,10,6,0.94); display:flex; align-items:center; justify-content:center; z-index:50; padding:20px; }
+  .victory-overlay.hidden{ display:none; }
+  .victory-card{ max-width:520px; background:var(--paper); border:3px double var(--red); padding:20px 26px 26px; text-align:center; }
+  .victory-card svg{ width:180px; height:auto; margin-bottom:6px; }
+  .victory-card h2{ font-family:'Special Elite',monospace; color:var(--red); font-size:1.4rem; margin:4px 0; }
+  .victory-card .code{ font-family:'IBM Plex Mono',monospace; background:var(--ink); color:#c9ff9e; padding:7px 11px; display:inline-block; margin:10px 0; letter-spacing:2px; }
+  .victory-card button{ margin-top:10px; font-family:'Archivo',sans-serif; font-weight:700; background:var(--olive); color:var(--paper); border:none; padding:9px 16px; cursor:pointer; }
+
+  .zone{ transition:filter .3s; }
+  .zone.active{ animation:zonepulse 1.6s ease-in-out infinite; }
+  @keyframes zonepulse{ 0%,100%{ filter:drop-shadow(0 0 0 rgba(139,30,30,0)); } 50%{ filter:drop-shadow(0 0 6px rgba(139,30,30,0.9)); } }
+  .zone.active rect, rect.zone.active{ stroke:var(--red) !important; stroke-width:3 !important; }
+
+  .idcard{ display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--ink-soft); padding:5px 8px; margin-bottom:8px; }
+  .idcard svg{ width:34px; height:34px; flex:0 0 34px; }
+  .idcard .idtext{ font-family:'IBM Plex Mono',monospace; font-size:0.62rem; line-height:1.3; color:var(--ink-soft); }
+  .idcard .idtext b{ display:block; font-size:0.72rem; color:var(--ink); letter-spacing:0.5px; }
+  .redact{ display:inline-block; background:var(--ink); color:var(--ink); border-radius:2px; padding:0 4px; }
+
+  .intro-overlay{ position:fixed; inset:0; background:rgba(10,10,6,0.95); display:flex; align-items:center; justify-content:center; z-index:60; padding:18px; }
+  .intro-overlay.hidden{ display:none; }
+  .intro-card{ max-width:600px; max-height:90vh; overflow-y:auto; background:var(--paper); border:3px double var(--red); padding:22px 24px 24px; }
+  .intro-card svg.scene{ width:100%; height:auto; margin-bottom:10px; }
+  .intro-card h2{ font-family:'Special Elite',monospace; color:var(--red); font-size:1.35rem; margin:0 0 8px; text-align:center; letter-spacing:1px; }
+  .intro-card p{ font-family:'Special Elite',monospace; font-size:0.88rem; line-height:1.55; color:var(--ink); margin:0 0 10px; }
+  .howto{ display:flex; gap:10px; margin:14px 0; flex-wrap:wrap; }
+  .howto .step{ flex:1; min-width:150px; background:var(--paper-dark); border:1px solid var(--ink-soft); padding:9px; text-align:center; }
+  .howto .step svg{ width:26px; height:26px; color:var(--olive-dark); margin-bottom:4px; }
+  .howto .step div.label{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--ink-soft); line-height:1.4; }
+  #enterBtn{ display:block; width:100%; font-family:'Archivo',sans-serif; font-weight:700; font-size:0.9rem; background:var(--gold); color:#1c1400; border:none; padding:12px; cursor:pointer; letter-spacing:0.5px; }
+  #enterBtn:disabled{ background:var(--paper-dark); color:var(--ink-soft); cursor:wait; }
+</style>
+</head>
+<body>
+
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-card">
+    <svg class="scene" viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+      <rect width="600" height="130" fill="#14170f"/>
+      <circle cx="60" cy="30" r="16" fill="#e9d9ad" opacity="0.85"/>
+      <g stroke="#4a4530" stroke-width="2" fill="none">
+        <line x1="0" y1="100" x2="600" y2="100"/>
+        <line x1="120" y1="20" x2="120" y2="100"/>
+        <line x1="100" y1="35" x2="140" y2="35"/><line x1="100" y1="50" x2="140" y2="50"/><line x1="100" y1="65" x2="140" y2="65"/><line x1="100" y1="80" x2="140" y2="80"/>
+        <line x1="480" y1="20" x2="480" y2="100"/>
+        <line x1="460" y1="35" x2="500" y2="35"/><line x1="460" y1="50" x2="500" y2="50"/><line x1="460" y1="65" x2="500" y2="65"/><line x1="460" y1="80" x2="500" y2="80"/>
+      </g>
+      <rect x="240" y="55" width="120" height="45" fill="#23281a" stroke="#7f8f66" stroke-width="1.5"/>
+      <rect x="260" y="30" width="14" height="30" fill="#23281a" stroke="#7f8f66" stroke-width="1.5"/>
+      <circle cx="267" cy="40" r="2" fill="#e9d9ad"/>
+      <path d="M290 95 L410 88 L470 78 L472 84 L420 96 L472 106 L470 112 L410 100 L290 100 Z" fill="#7f8f66" opacity="0.5"/>
+    </svg>
+
+    <h2>CASE FILE NO. 9-C — EYES ONLY</h2>
+    <p>You are <b>Agent Kestrel</b>, held three weeks now at Sperrfeld Processing Camp after a reconnaissance run near the border went wrong. Tonight, a sympathetic clerk patches a cracked terminal into the camp's records system and vanishes before you can ask why.</p>
+    <p>Somewhere past the wire sits <b>Nighthawk-9</b> — an experimental stealth aircraft awaiting transfer. If you can pull the right records before dawn, you can be the one flying it out.</p>
+    <p>The terminal only understands one language.</p>
+
+    <div class="howto">
+      <div class="step">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="1.5"/><path d="M6 9l3 3-3 3M13 15h5"/></svg>
+        <div class="label">Type a SQL query into the terminal and run it</div>
+      </div>
+      <div class="step">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.6 6.6L21 9.3l-5 4.4 1.5 6.8L12 17l-5.5 3.5L8 13.7 3 9.3l6.4-.7z"/></svg>
+        <div class="label">The right query pulls the next clue and stamps it VERIFIED</div>
+      </div>
+      <div class="step">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16.5" r="0.6" fill="currentColor"/></svg>
+        <div class="label">Stuck? Tap Hint for the exact query to try</div>
+      </div>
+    </div>
+
+    <button id="enterBtn" type="button" disabled>Booting terminal…</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="masthead">
+    <h1>OPERATION NIGHTHAWK</h1>
+    <div class="stamp">CLASSIFIED</div>
+  </div>
+
+  <div class="mapwrap">
+    <svg viewBox="0 0 900 170" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#4a4530" stroke-width="2">
+      <rect x="4" y="4" width="892" height="162" stroke-dasharray="6 5" stroke="#8b1e1e"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#4a4530" stroke="none">
+        <rect x="30" y="30" width="90" height="60" fill="#dcd2b0" stroke="#4a4530"/><text x="55" y="65">A</text>
+        <rect x="140" y="30" width="90" height="60" fill="#dcd2b0" stroke="#4a4530"/><text x="165" y="65">B</text>
+        <rect id="zone-c" class="zone" x="30" y="105" width="90" height="35" fill="#c9bd91" stroke="#8b1e1e" stroke-width="2"/><text x="55" y="127">C (YOU)</text>
+        <rect x="140" y="105" width="90" height="35" fill="#dcd2b0" stroke="#4a4530"/><text x="165" y="127">D</text>
+        <rect id="zone-hq" class="zone" x="270" y="30" width="80" height="110" fill="#dcd2b0" stroke="#4a4530"/><text x="285" y="90">HQ</text>
+        <line x1="380" y1="85" x2="470" y2="85" stroke="#4a4530" stroke-dasharray="4 4"/>
+        <rect x="480" y="20" width="60" height="130" fill="none" stroke="#4a4530"/><text x="486" y="90" font-size="10">FENCE</text>
+        <g id="zone-hangar" class="zone">
+          <rect x="570" y="35" width="100" height="100" fill="#dcd2b0" stroke="#4a4530"/><text x="588" y="90">HANGAR</text>
+          <path d="M 700 85 L 860 60 L 860 75 L 800 85 L 860 95 L 860 110 Z" fill="#4a4530"/>
+          <text x="750" y="140">NIGHTHAWK-9</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="folder">
+    <nav class="tabs" id="tabs"></nav>
+
+    <section class="dossier">
+      <div class="dossier-header">MISSION LOG</div>
+      <div class="idcard">
+        <svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#23200f" stroke-width="1.6"><circle cx="17" cy="13" r="7"/><path d="M4 32c0-8 6-13 13-13s13 5 13 13"/></svg>
+        <div class="idtext"><b>AGENT KESTREL</b>PRISONER 01 · BLOCK C<br>CLEARANCE: <span class="redact">XXXXXX</span></div>
+      </div>
+      <div id="log"></div>
+      <div class="doors" id="doors"></div>
+    </section>
+
+    <section class="terminal">
+      <div class="terminal-header">
+        <span>SPERRFELD TERMINAL</span>
+        <button id="schemaToggle" type="button">Schema ▾</button>
+      </div>
+      <div class="schema-panel hidden" id="schemaPanel"></div>
+      <div class="task-box" id="taskBox"><div class="task-icon" id="taskIcon"></div><div id="taskText"></div></div>
+      <textarea id="sqlInput" placeholder="SELECT * FROM prisoners;"></textarea>
+      <div class="controls">
+        <button id="runBtn" type="button">Run Query</button>
+        <button id="hintBtn" type="button">Hint</button>
+        <button id="resetBtn" type="button">Reset</button>
+      </div>
+      <div class="hint-box hidden" id="hintBox"></div>
+      <div class="error-box hidden" id="errorBox"></div>
+      <div class="results-box" id="resultsBox"></div>
+    </section>
+  </div>
+</div>
+
+<div class="victory-overlay hidden" id="victoryOverlay">
+  <div class="victory-card">
+    <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg" fill="#23200f">
+      <path d="M10 45 L120 35 L190 20 L195 28 L140 48 L190 62 L195 70 L120 55 L10 50 Z"/>
+      <path d="M95 30 L110 5 L118 5 L112 32 Z"/><path d="M95 62 L110 85 L118 85 L112 58 Z"/>
+    </svg>
+    <h2>WHEELS UP</h2>
+    <div class="code">ECHO-VICTOR-NINER-ACTUAL</div>
+    <button id="playAgainBtn" type="button">Run It Again</button>
+  </div>
+</div>
+
+<script>
+const SCHEMA_SQL = `
+CREATE TABLE prisoners (id INTEGER PRIMARY KEY, name TEXT, cell_block TEXT, is_player INTEGER, status TEXT);
+INSERT INTO prisoners VALUES (1,'Agent Kestrel','C',1,'captured'),(2,'Ivan Petrov','A',0,'captured'),(3,'Mei Lin','B',0,'captured'),(4,'Otto Braun','D',0,'captured');
+CREATE TABLE guards (id INTEGER PRIMARY KEY, name TEXT, shift TEXT, block TEXT, trust_level INTEGER, keycard_level INTEGER);
+INSERT INTO guards VALUES (1,'Sgt. Volkov','day','A',8,3),(2,'Cpl. Hess','night','A',4,2),(3,'Sgt. Dubois','day','B',7,3),(4,'Pvt. Novak','night','B',5,2),(5,'Sgt. Kowalski','day','C',9,4),(6,'Pvt. Schmidt','night','C',2,2),(7,'Sgt. Reyes','day','D',8,3),(8,'Cpl. Bauer','night','D',6,2),(9,'Commandant Falkenrath','day','HQ',3,5);
+CREATE TABLE guard_breaks (id INTEGER PRIMARY KEY, guard_id INTEGER, day TEXT, break_start TEXT, break_end TEXT);
+INSERT INTO guard_breaks VALUES (1,6,'Monday','23:15','23:45'),(2,6,'Tuesday','23:10','23:40'),(3,2,'Monday','01:00','01:20'),(4,9,'Monday','13:30','14:15'),(5,9,'Tuesday','13:20','14:00'),(6,4,'Monday','02:00','02:30');
+CREATE TABLE keycards (id INTEGER PRIMARY KEY, code TEXT, level INTEGER, assigned_guard_id INTEGER);
+INSERT INTO keycards VALUES (1,'KC-1A9X',3,1),(2,'KC-2F2A',2,2),(3,'KC-3B7Q',3,3),(4,'KC-4M2Z',2,4),(5,'KC-5T1R',4,5),(6,'KC-6F2A',2,6),(7,'KC-7Q9W',3,7),(8,'KC-8H3E',2,8),(9,'KC-9X0V',5,9);
+CREATE TABLE cameras (id INTEGER PRIMARY KEY, block TEXT, status TEXT);
+INSERT INTO cameras VALUES (1,'A','active'),(2,'A','active'),(3,'A','offline'),(4,'B','active'),(5,'B','active'),(6,'B','active'),(7,'C','active'),(8,'C','offline'),(9,'C','offline'),(10,'D','active'),(11,'D','offline'),(12,'D','active');
+CREATE TABLE hangar_sections (id INTEGER PRIMARY KEY, section_name TEXT, order_num INTEGER, access_code TEXT);
+INSERT INTO hangar_sections VALUES (1,'Perimeter Fence Gate',1,'7734'),(2,'Motor Pool Checkpoint',2,'2210'),(3,'Inner Compound Door',3,'5591'),(4,'Hangar Outer Door',4,'8823'),(5,'Hangar Inner Vault',5,'4467');
+CREATE TABLE aircraft (id INTEGER PRIMARY KEY, callsign TEXT, unlock_sequence TEXT, final_launch_code TEXT);
+INSERT INTO aircraft VALUES (1,'Nighthawk-9','77342210559188234467','ECHO-VICTOR-NINER-ACTUAL');
+`;
+
+const SCHEMA_DOC = [
+  ['prisoners','id, name, cell_block, is_player, status'],
+  ['guards','id, name, shift, block, trust_level, keycard_level'],
+  ['guard_breaks','id, guard_id, day, break_start, break_end'],
+  ['keycards','id, code, level, assigned_guard_id'],
+  ['cameras','id, block, status'],
+  ['hangar_sections','id, section_name, order_num, access_code'],
+  ['aircraft','id, callsign, unlock_sequence, final_launch_code'],
+];
+
+const ICONS = {
+  id:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="1.5"/><circle cx="8" cy="12" r="2.2"/><line x1="13" y1="9" x2="19" y2="9"/><line x1="13" y1="13" x2="19" y2="13"/></svg>',
+  guard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+  cam:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="14" height="10" rx="1.5"/><path d="M16 10l6-3v10l-6-3"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.6 6.6L21 9.3l-5 4.4 1.5 6.8L12 17l-5.5 3.5L8 13.7 3 9.3l6.4-.7z"/></svg>',
+  key:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="4"/><path d="M11 11l9 9M16 16l3-3M18 18l3-3"/></svg>',
+  door: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="1"/><circle cx="15" cy="12" r="1"/></svg>',
+  chain:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="8" width="9" height="9" rx="4"/><rect x="13" y="8" width="9" height="9" rx="4"/></svg>',
+  plane:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M2 13l8-1 6-9 2 1-4 9 6-1 2 2-7 3 1 5-2 1-3-5-6 3 -1-2 4-4z"/></svg>',
+  kestrel:'<svg viewBox="0 0 34 34"><circle cx="17" cy="13" r="7" fill="#e9d9ad"/><path d="M4 32c0-8 6-13 13-13s13 5 13 13" fill="#e9d9ad"/><rect x="10" y="6" width="14" height="4" fill="#33390f"/></svg>',
+  schmidt:'<svg viewBox="0 0 34 34"><circle cx="17" cy="13" r="7" fill="#c9bd91"/><path d="M4 32c0-8 6-13 13-13s13 5 13 13" fill="#c9bd91"/><rect x="9" y="7" width="16" height="4" fill="#4b5320"/><circle cx="22" cy="16" r="1.3" fill="#8b1e1e"/></svg>',
+  falkenrath:'<svg viewBox="0 0 34 34"><circle cx="17" cy="13" r="7" fill="#dcd2b0"/><path d="M4 32c0-8 6-13 13-13s13 5 13 13" fill="#dcd2b0"/><rect x="8" y="5" width="18" height="5" fill="#8b1e1e"/><rect x="13" y="16" width="8" height="2" fill="#23200f"/></svg>'
+};
+
+function flatten(execResult){ const flat=[]; execResult.forEach(r=>r.values.forEach(row=>row.forEach(cell=>flat.push(String(cell))))); return flat; }
+
+const LEVELS = [
+  { icon:'id',    zone:'zone-c',      title:'First Contact',   task:'SELECT * FROM <b>prisoners</b>;',
+    hint:"SELECT * FROM prisoners;", check:(sql)=>sql.includes('prisoners'), success:'Roster loaded.' },
+  { icon:'kestrel', zone:'zone-c',    title:'Know Your Cage',  task:'Find your cell_block <b>WHERE is_player = 1</b>.',
+    hint:"SELECT cell_block FROM prisoners WHERE is_player = 1;", check:(sql,flat)=>sql.includes('prisoners')&&sql.includes('is_player')&&flat.includes('C'), success:'Block C.' },
+  { icon:'guard', zone:'zone-c',      title:'The Watchers',    task:'List <b>guards</b> WHERE block = \'C\'.',
+    hint:"SELECT * FROM guards WHERE block = 'C';", check:(sql,flat)=>sql.includes('guards')&&flat.includes('Sgt. Kowalski')&&flat.includes('Pvt. Schmidt'), success:'Kowalski. Schmidt.' },
+  { icon:'schmidt', zone:'zone-c',    title:'The Weak Link',   task:'Block C night guard, <b>lowest trust_level</b>.',
+    hint:"SELECT name FROM guards WHERE block='C' AND shift='night' ORDER BY trust_level ASC LIMIT 1;", check:(sql,flat)=>flat.includes('Pvt. Schmidt')&&sql.includes('order by')&&sql.includes('limit'), success:'Schmidt confirmed.' },
+  { icon:'schmidt', zone:'zone-c',    title:'Smoke Break',     task:'<b>JOIN</b> guards + guard_breaks → Schmidt, Monday.',
+    hint:"SELECT break_start, break_end FROM guards JOIN guard_breaks ON guards.id = guard_breaks.guard_id WHERE guards.name = 'Pvt. Schmidt' AND day = 'Monday';", check:(sql,flat)=>sql.includes('join')&&flat.includes('23:15')&&flat.includes('23:45'), success:'23:15–23:45. Window open.' },
+  { icon:'cam',   zone:'zone-c',      title:'Blind Spots',     task:'<b>COUNT</b> active cameras, <b>GROUP BY</b> block.',
+    hint:"SELECT block, COUNT(*) FROM cameras WHERE status='active' GROUP BY block ORDER BY COUNT(*) ASC LIMIT 1;", check:(sql,flat)=>sql.includes('cameras')&&sql.includes('group by')&&flat.includes('C'), success:'Block C is blind.' },
+  { icon:'falkenrath', zone:'zone-hq',title:'Top Clearance',   task:'Guard with <b>highest keycard_level</b>, camp-wide.',
+    hint:"SELECT name FROM guards WHERE keycard_level = (SELECT MAX(keycard_level) FROM guards);", check:(sql,flat)=>flat.includes('Commandant Falkenrath'), success:'Falkenrath. Level 5.' },
+  { icon:'falkenrath', zone:'zone-hq',title:"Commandant's Lunch", task:'<b>JOIN</b> → Falkenrath, Monday break.',
+    hint:"SELECT break_start, break_end FROM guards JOIN guard_breaks ON guards.id = guard_breaks.guard_id WHERE guards.name = 'Commandant Falkenrath' AND day = 'Monday';", check:(sql,flat)=>sql.includes('join')&&flat.includes('13:30')&&flat.includes('14:15'), success:'13:30–14:15.' },
+  { icon:'key',   zone:'zone-hq',     title:'Master Key',      task:'<b>JOIN</b> guards + keycards → Falkenrath\'s code.',
+    hint:"SELECT code FROM guards JOIN keycards ON guards.id = keycards.assigned_guard_id WHERE guards.name = 'Commandant Falkenrath';", check:(sql,flat)=>sql.includes('join')&&flat.includes('KC-9X0V'), success:'KC-9X0V cloned.' },
+  { icon:'door',  zone:'zone-hangar', title:'The Long Walk',   task:'<b>hangar_sections ORDER BY order_num</b>.',
+    hint:"SELECT * FROM hangar_sections ORDER BY order_num;", check:(sql,flat)=>sql.includes('order by')&&['7734','2210','5591','8823','4467'].every(c=>flat.includes(c)), success:'5 checkpoints mapped.' },
+  { icon:'chain', zone:'zone-hangar', title:'One Sequence',    task:'<b>GROUP_CONCAT</b> access_codes, in order.',
+    hint:"SELECT GROUP_CONCAT(access_code, '') FROM (SELECT access_code FROM hangar_sections ORDER BY order_num);", check:(sql,flat)=>flat.some(v=>v.replace(/[^0-9]/g,'')==='77342210559188234467'), success:'Sequence assembled.' },
+  { icon:'plane', zone:'zone-hangar', title:'Wheels Up',       task:'Match <b>unlock_sequence</b> → final_launch_code.',
+    hint:"SELECT final_launch_code FROM aircraft WHERE unlock_sequence = '77342210559188234467';", check:(sql,flat)=>flat.includes('ECHO-VICTOR-NINER-ACTUAL'), success:'WIN' },
+];
+
+let db=null, currentLevel=0, completedLevels=new Set();
+
+function initGame(){
+  db=new SQL.Database(); db.run(SCHEMA_SQL);
+  currentLevel=0; completedLevels=new Set();
+  document.getElementById('log').innerHTML='';
+  document.getElementById('resultsBox').innerHTML='';
+  document.getElementById('sqlInput').value='';
+  hide('hintBox'); hide('errorBox'); hide('victoryOverlay');
+  renderTabs(); renderTask(); renderDoors(); addLogEntry(0,false);
+}
+function hide(id){ document.getElementById(id).classList.add('hidden'); }
+function show(id){ document.getElementById(id).classList.remove('hidden'); }
+
+function renderTabs(){
+  const tabs=document.getElementById('tabs'); tabs.innerHTML='';
+  LEVELS.forEach((lvl,i)=>{
+    const d=document.createElement('div');
+    const isComplete=completedLevels.has(i), isCurrent=i===currentLevel, isUnlocked=i<=currentLevel;
+    d.className='tab'+(isComplete?' complete':'')+(isCurrent?' current':'')+(isUnlocked?' unlocked':'');
+    d.textContent=String(i).padStart(2,'0'); d.title=lvl.title;
+    if(isUnlocked) d.addEventListener('click',()=>{ currentLevel=i; renderTabs(); renderTask(); });
+    tabs.appendChild(d);
+  });
+}
+function highlightZone(zoneId){
+  document.querySelectorAll('.zone').forEach(z=>z.classList.remove('active'));
+  if(zoneId) document.getElementById(zoneId).classList.add('active');
+}
+function renderTask(){
+  const lvl=LEVELS[currentLevel];
+  document.getElementById('taskIcon').innerHTML=ICONS[lvl.icon];
+  document.getElementById('taskText').innerHTML='<b>'+String(currentLevel).padStart(2,'0')+' — '+lvl.title+'</b><br>'+lvl.task;
+  hide('hintBox'); hide('errorBox');
+  highlightZone(lvl.zone);
+}
+function addLogEntry(levelIdx,wasSuccess){
+  const lvl=LEVELS[levelIdx]; const log=document.getElementById('log');
+  const entry=document.createElement('div');
+  entry.className='log-entry'+(wasSuccess?' result-good':'');
+  entry.innerHTML='<div class="log-icon">'+ICONS[lvl.icon]+'</div><div class="log-body">'+
+    '<span class="entry-title">'+String(levelIdx).padStart(2,'0')+' '+lvl.title+(wasSuccess?'<span class="verified-stamp">VERIFIED</span>':'')+'</span>'+
+    '<span class="line">'+(wasSuccess?lvl.success:lvl.task)+'</span></div>';
+  log.appendChild(entry); log.scrollTop=log.scrollHeight;
+}
+function renderDoors(){
+  const doors=document.getElementById('doors'); doors.innerHTML='';
+  for(let i=0;i<5;i++){
+    const d=document.createElement('div');
+    d.className='door'+(completedLevels.has(9)&&i<5&&currentLevel>=9+ (i<1?0:0) ? '' : '');
+    d.classList.toggle('open', completedLevels.has(9));
+    d.innerHTML=ICONS['door'];
+    doors.appendChild(d);
+  }
+}
+function renderSchema(){
+  document.getElementById('schemaPanel').innerHTML=SCHEMA_DOC.map(([n,c])=>'<div class="schema-table"><b>'+n+'</b><br><span>'+c+'</span></div>').join('');
+}
+function renderResults(execResult){
+  const box=document.getElementById('resultsBox');
+  if(!execResult||execResult.length===0){ box.innerHTML='<div class="row-count">No rows returned.</div>'; return; }
+  let html='';
+  execResult.forEach(r=>{
+    html+='<table class="result-table"><thead><tr>'+r.columns.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+    r.values.forEach(row=>{ html+='<tr>'+row.map(v=>'<td>'+(v===null?'NULL':v)+'</td>').join('')+'</tr>'; });
+    html+='</tbody></table><div class="row-count">'+r.values.length+' row(s)</div>';
+  });
+  box.innerHTML=html;
+}
+function runQuery(){
+  const input=document.getElementById('sqlInput').value.trim();
+  hide('errorBox'); if(!input) return;
+  let result;
+  try{ result=db.exec(input); } catch(e){ document.getElementById('errorBox').textContent='ERROR: '+e.message; show('errorBox'); return; }
+  renderResults(result);
+  const sqlLower=input.toLowerCase(); const flat=flatten(result); const lvl=LEVELS[currentLevel];
+  if(!completedLevels.has(currentLevel) && lvl.check(sqlLower,flat)){
+    completedLevels.add(currentLevel); addLogEntry(currentLevel,true); renderDoors();
+    if(lvl.success==='WIN'){ show('victoryOverlay'); return; }
+    if(currentLevel<LEVELS.length-1){ currentLevel+=1; addLogEntry(currentLevel,false); }
+    renderTabs(); renderTask();
+  }
+}
+document.getElementById('runBtn').addEventListener('click',runQuery);
+document.getElementById('sqlInput').addEventListener('keydown',(e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter') runQuery(); });
+document.getElementById('hintBtn').addEventListener('click',()=>{
+  const box=document.getElementById('hintBox'); box.innerHTML='<b>NOTE:</b> '+LEVELS[currentLevel].hint; show(box.id);
+});
+document.getElementById('schemaToggle').addEventListener('click',()=>{ document.getElementById('schemaPanel').classList.toggle('hidden'); });
+document.getElementById('resetBtn').addEventListener('click',()=>{ if(confirm('Restart the operation?')) initGame(); });
+document.getElementById('playAgainBtn').addEventListener('click',()=>{ hide('victoryOverlay'); initGame(); });
+document.getElementById('enterBtn').addEventListener('click',()=>{ hide('introOverlay'); });
+
+renderSchema();
+document.getElementById('taskText').textContent='Loading terminal…';
+initSqlJs({ locateFile:f=>'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/'+f })
+  .then(SQL=>{
+    window.SQL=SQL; initGame();
+    const enterBtn=document.getElementById('enterBtn');
+    enterBtn.disabled=false; enterBtn.textContent='Enter The Terminal →';
+  })
+  .catch(err=>{
+    document.getElementById('taskText').textContent='Boot failed: '+err.message;
+    document.getElementById('enterBtn').textContent='Terminal failed to load';
+  });
+</script>
+</body>
+</html>
